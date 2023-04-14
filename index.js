@@ -39,5 +39,6 @@ const viewDepartments = () => {
         console.log(rows);
     })
 }
+
 mainmenu()
 
