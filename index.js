@@ -36,9 +36,13 @@ inquirer
 }
 const viewDepartments = () => {
     db.promise().query("SELECT * FROM department").then(([rows])=>{
+        //console.log(rows);
+    })
+}
+const viewRoles = () => {
+    db.promise().query("SELECT * FROM role").then(([rows])=>{
         console.log(rows);
     })
 }
-
 mainmenu()
 
