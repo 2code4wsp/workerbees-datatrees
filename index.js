@@ -16,7 +16,7 @@ const mainmenu = () => {
 inquirer
 .prompt({
     name: "task",
-    message: "What would you like to view?",
+    message: "What would you like to do?",
     type: "list",
     choices: ["view all departments", "view all roles", "view all employees", "add a department", "add a role", "add an employee", "update an employee role"]
 }) .then(({task}) => {
@@ -30,10 +30,14 @@ inquirer
         case "view all employees":
             viewEmployees()
             break;
+        case "add a department":
+            addDepartment()
+            break;
         default: process.exit();
     }
 })  
 }
+//viewing departments, roles, and employees
 const viewDepartments = () => {
     db.promise().query("SELECT * FROM department").then(([rows])=>{
         //console.log(rows);
@@ -44,5 +48,13 @@ const viewRoles = () => {
         console.log(rows);
     })
 }
+const viewEmployees = () => {
+    db.promise().query("SELECT * FROM employee").then(([rows])=>{
+        console.log(rows);
+    })
+}
+//const addDepartment = () => {
+    //db.promise().query("SELECT * FROM department").then(([rows])=>{
+
 mainmenu()
 
