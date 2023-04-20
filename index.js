@@ -1,6 +1,7 @@
 //include all packages needed
-//const { default: inquirer } = require('inquirer');
+
 const inquirer = require('inquirer');
+const { default: InputPrompt } = require('inquirer/lib/prompts/input');
 require('dotenv').config();
 const mysql = require('mysql2');
 const db = mysql.createConnection({
@@ -11,6 +12,7 @@ const db = mysql.createConnection({
 
 });
 db.connect(function(error){if(error)throw error});
+
 //questions for database
 const mainmenu = () => {
 inquirer
@@ -30,13 +32,10 @@ inquirer
         case "view all employees":
             viewEmployees()
             break;
-        case "add a department":
-            addDepartment()
-            break;
-        default: process.exit();
-    }
-})  
+     default: process.exit();
+    }})
 }
+
 //viewing departments, roles, and employees
 const viewDepartments = () => {
     db.promise().query("SELECT * FROM department").then(([rows])=>{
@@ -53,8 +52,6 @@ const viewEmployees = () => {
         console.log(rows);
     })
 }
-//const addDepartment = () => {
-    //db.promise().query("SELECT * FROM department").then(([rows])=>{
 
 mainmenu()
 
