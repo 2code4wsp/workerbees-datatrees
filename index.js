@@ -32,26 +32,69 @@ inquirer
         case "view all employees":
             viewEmployees()
             break;
+        case "add a role":
+            addRole()
+            break;
+        case "add a department":
+            addDepartment()
+            break;
      default: process.exit();
     }})
 }
 
 //viewing departments, roles, and employees
 const viewDepartments = () => {
-    db.promise().query("SELECT * FROM department").then(([rows])=>{
-        //console.log(rows);
+    db.promise().query("SELECT department.department_name AS Department FROM department").then(([rows])=>{
+        console.table(rows);
+        mainmenu ();
     })
 }
 const viewRoles = () => {
-    db.promise().query("SELECT * FROM role").then(([rows])=>{
-        console.log(rows);
+    db.promise().query("SELECT role.title AS Title, role.salary AS Salary, department.department_name AS Department FROM role LEFT JOIN department ON role.department_id = department.id").then(([rows])=>{
+        console.table(rows);
+        mainmenu ();
     })
 }
 const viewEmployees = () => {
     db.promise().query("SELECT * FROM employee").then(([rows])=>{
-        console.log(rows);
+        console.table(rows);
+        mainmenu ();
+    })
+
+}
+
+//adding departments, roles, and employees 
+const addRole = async () => {
+    const [departments] = await db.promise().query("SELECT * FROM department")
+    const departmentarr = departments.map(department =>({name: department.department_name, value: department.id}))
+    console.log(departmentarr);
+    inquirer.prompt([
+        {type: "input", name: "title", message: "enter the new title of the role"}, 
+        {type: "input", name: "salary", message: "enter the salary"},
+        {type: "list", name: "department_id", message: "select department from list", choices: departmentarr},
+    ]).then(({title, salary, department_id})=> {   
+        db.promise().query("INSERT INTO role SET ?", {title, salary, department_id}).then(([res]) => res.affectedRows > 0 ? viewRoles() :senderr("role")); //ternary
+
     })
 }
+const addDepartment = async () => {
+    const [department] = (await db.promise()).query("SELECT * FROM department")
+    const departmentarr = department.map(department =>({name: department.department.name, department: department.id}))
+    console.log(departmentarr);
+    inquirer.prompt([
+        {type: "input", name: "department_name", message: "enter the new department name"},
+    ]).then(({department_name})=> {
+        db.promise().query("INSERT INTO department SET ?", {department_name}).then(([res]) => res.affectedRows > 0 ? viewDepartment() : senderr("department"));
+    })
+}
+
+
+
+const senderr = (table) => {
+    console.info("failed to add to table: " + table)
+    mainmenu();
+}
+
 
 mainmenu()
 
