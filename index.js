@@ -44,7 +44,7 @@ inquirer
 
 //viewing departments, roles, and employees
 const viewDepartments = () => {
-    db.promise().query("SELECT department.department_name AS Department FROM department").then(([rows])=>{
+    db.promise().query("SELECT department.department_name AS Department FROM department LEFT JOIN department ON department.department_name = department.name").then(([rows])=>{
         console.table(rows);
         mainmenu ();
     })
@@ -79,12 +79,12 @@ const addRole = async () => {
 }
 const addDepartment = async () => {
     const [department] = (await db.promise()).query("SELECT * FROM department")
-    const departmentarr = department.map(department =>({name: department.department.name, department: department.id}))
-    console.log(departmentarr);
+    const departmentarray = department.map(department =>({name: department.department_name, value: department.id}))
+    console.log(departmentarray);
     inquirer.prompt([
         {type: "input", name: "department_name", message: "enter the new department name"},
     ]).then(({department_name})=> {
-        db.promise().query("INSERT INTO department SET ?", {department_name}).then(([res]) => res.affectedRows > 0 ? viewDepartment() : senderr("department"));
+        db.promise().query("INSERT INTO department SET ?", {department_name}).then(([res]) => res.affectedRows > 0 ? viewDepartments() :senderr("department"));
     })
 }
 
